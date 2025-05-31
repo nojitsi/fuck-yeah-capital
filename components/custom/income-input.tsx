@@ -4,16 +4,31 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-export default function IncomeInput() {
-  const [value, setValue] = useState("");
+type IncomeInputProps = {
+  initIncomeValue?: number;
+};
 
-  const handleClick = () => {
-    alert(`Цифра: ${value}`);
+export default function IncomeInput({ initIncomeValue }: IncomeInputProps) {
+  const [value, setValue] = useState(initIncomeValue ?? "");
+
+  const handleClick = async () => {
+    const response = await fetch('/api/meta', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ income: value })
+    });
+
+    const result = await response.json();
+    console.log(result);
   };
 
   return (
-    <div className="flex flex-col items-center gap-2 w-full max-w-md mx-auto bg-foreground p-2 rounded-lg">
-      Всі данні зашифровані
+    <div className="flex flex-col items-center gap-2 w-full max-w-md mx-auto bg-foreground p-2 rounded-lg text-[var(--gunmetal)]">
+      <p className="text-xs">
+        Введіть ваш заробіток
+      </p>
       <Input
         type="number"
         className="appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
@@ -21,7 +36,7 @@ export default function IncomeInput() {
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
-      <Button className="w-full" onClick={handleClick}>Продовжити</Button>
+      <Button className="w-full" onClick={handleClick}>Вперед</Button>
     </div>
   );
 }
