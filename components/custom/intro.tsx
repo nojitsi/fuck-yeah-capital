@@ -6,7 +6,7 @@ import {motion} from "framer-motion";
 import Image from "next/image";
 import IncomeInput from "@/components/custom/income-input";
 import {UserMeta} from "@/prisma/model/UserMeta";
-import DataIsSecureNotification from "@/components/custom/data-is-secure-notification";
+import EncryptionKeySetup from "@/components/custom/encryption-key-setup";
 
 type IntroProps = {
   user: User|null;
@@ -20,10 +20,6 @@ export default function Intro({ user }: IntroProps) {
 
   const [govMessageAppeared, setGovMessageAppeared] = useState(false);
   const [govMessageDisappeared, setGovMessageDisappeared] = useState(false);
-
-  const [caseAnimationCompleted, setCaseAnimationCompleted] = useState(false);
-
-  const [dataSecurityNotificationConfirmed, setDataSecurityNotificationConfirmed] = useState(false);
 
   return (
     <main className="flex flex-col min-h-screen items-center justify-center p-4">
@@ -47,60 +43,58 @@ export default function Intro({ user }: IntroProps) {
       }
 
       {
-        ! govMessageDisappeared ? <motion.div
-          className="absolute flex flex-col items-center justify-center top-0 left-0"
+        titleDisappeared && ! govMessageDisappeared ? <motion.div
+          className="flex flex-col items-center justify-center top-0 left-0"
           initial={ ! govMessageAppeared ? { x: -300, scale: 1, opacity: 0 } : { x: 0, scale: 1, opacity: 1 }}
-          animate={ ! govMessageAppeared ? { x: 0, scale: 1, opacity: 1 } : {opacity: 0}}
-          transition={ ! govMessageAppeared ? { delay: 5, duration: 1, ease: 'easeOut' } : {delay: 2, duration: 2}}
+          animate={ ! govMessageAppeared ? { x: 0, scale: 1, opacity: 1 } : { x: 0, opacity: 0, scale: 1}}
+          transition={ ! govMessageAppeared ? { duration: 1 } : { delay: 1.7, duration: 2 }}
           onAnimationComplete={() => {
             if (! govMessageAppeared) {
               setGovMessageAppeared(true);
+              console.log('govMessageAppeared');
             }
             if (govMessageAppeared && ! govMessageDisappeared) {
               setGovMessageDisappeared(true);
+              console.log('govMessageDisappeared');
             }
           }}
         >
+          <p className="text-xl font-bold">We will take your money</p>
           <Image
-            src="/bush.gif" // Заміни на реальну картинку
+            src="/bush.gif"
             width={0}
             height={0}
             className="w-64 h-auto rounded-xl shadow-xl"
             alt="Demo" />
-          <p className="text-xl font-bold">We will take your money</p>
-        </motion.div> : <></>
-      }
-
-      { govMessageDisappeared ?
-        <video
-          src="/caseopening.mp4"
-          autoPlay
-          muted
-          playsInline
-          className="w-100 h-auto absolute z-0 rounded-lg"
-          onEnded={() => setCaseAnimationCompleted(true)}
-        ></video> : <></>
-      }
-
-      {
-        caseAnimationCompleted && ! dataSecurityNotificationConfirmed ? <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{duration: 1}}
-          className="z-1 mb-25"
-        >
-          <DataIsSecureNotification onconfirm={() => {setDataSecurityNotificationConfirmed(true)}} />
         </motion.div> : <></>
       }
 
       {
-        dataSecurityNotificationConfirmed ? <div
-          className="z-1 mb-25"
+        govMessageDisappeared ? <div
+          className=""
         >
-          <IncomeInput initIncomeValue={meta?.income} />
-
+          <EncryptionKeySetup />
         </div> : <></>
       }
+
+      {/*{*/}
+      {/*  govMessageDisappeared ? <div*/}
+      {/*    className="z-1 mb-25"*/}
+      {/*  >*/}
+      {/*    <IncomeInput initIncomeValue={meta?.income} />*/}
+
+      {/*  </div> : <></>*/}
+      {/*}*/}
+
+
+      {/*{*/}
+      {/*  govMessageDisappeared ? <div*/}
+      {/*    className="z-1 mb-25"*/}
+      {/*  >*/}
+      {/*    <IncomeInput initIncomeValue={meta?.income} />*/}
+
+      {/*  </div> : <></>*/}
+      {/*}*/}
 
       {/*<div className="mt-5 flex flex-col space-y-4">*/}
       {/*    <Button variant="default">Звичайна кнопка</Button>*/}
